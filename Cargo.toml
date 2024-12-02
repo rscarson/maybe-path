@@ -11,7 +11,7 @@ categories = ["rust-patterns", "filesystem", "data-structures"]
 readme = "README.md"
 
 [dependencies]
-serde = "1"
+serde = {version = "1", features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.5.1"
