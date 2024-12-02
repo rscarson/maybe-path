@@ -9,6 +9,20 @@
 //!
 //! It implements `Deref<Target = Path>`, so you can treat it as a drop-in replacement for `Path` in most cases.
 //!
+//! Basic usage is as follows:
+//! ```rust
+//! use maybe_path::{MaybePath, MaybePathBuf};
+//!
+//! // These are both equivalent to `Path::new("foo/bar/baz")`
+//! // But normally the const could not also be a `Path`
+//! let path = MaybePath::new_path("foo/bar/baz");
+//! const PATH: MaybePath = MaybePath::new_str("foo/bar/baz");
+//!
+//! // An equivalent to `Cow<Path>` is also included
+//! let not_a_cow = MaybePathBuf::new_path("foo/bar/baz");
+//! const NOT_A_COW: MaybePathBuf = MaybePathBuf::new_str("foo/bar/baz");
+//! ```
+//!
 //! # Performance
 //! `MaybePath` is a zero-runtime-cost abstraction over `Path` and `str`.  
 //! Benchmarks show that `MaybePath` is faster than `Cow<Path>` for most operations:  
