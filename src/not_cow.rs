@@ -18,13 +18,13 @@ use std::{
 /// - `Owned(PathBuf)`
 ///
 /// # Performance
-/// This type introduces a small runtime overhead compared to `Cow<Path>`:
-/// - Read: `1.9780 ns` vs `781.73 ps`
-/// - Clone: `2.9074 ns` vs `1.0642 ns`
+/// This type has performance matching, or beating that of `Cow<Path>`:
+/// - Read: `1.5958 ns` vs `1.6596 ns`
+/// - Clone: `3.8059 ns` vs `3.2304 ns`
+/// - AsRef x1000: `2.1066 µs` vs `3.2081 µs`
 ///
 /// The borrowed variant also stores a `u8` to differentiate between `Path` and `str`,
 #[derive(Debug, Serialize, Eq, PartialEq, PartialOrd, Ord, Hash)]
-#[repr(u8)]
 pub enum MaybePathBuf<'a> {
     /// Borrowed data
     Borrowed(MaybePath<'a>),
@@ -40,6 +40,7 @@ impl Default for MaybePathBuf<'_> {
 }
 
 impl Clone for MaybePathBuf<'_> {
+    #[inline]
     fn clone(&self) -> Self {
         match *self {
             Self::Borrowed(b) => Self::Borrowed(b),
@@ -50,6 +51,7 @@ impl Clone for MaybePathBuf<'_> {
         }
     }
 
+    #[inline]
     fn clone_from(&mut self, source: &Self) {
         match (self, source) {
             (&mut Self::Owned(ref mut dest), Self::Owned(o)) => {
@@ -128,6 +130,7 @@ impl<'a> Borrow<Path> for MaybePathBuf<'a> {
 impl Deref for MaybePathBuf<'_> {
     type Target = Path;
 
+    #[inline]
     fn deref(&self) -> &Self::Target {
         match self {
             Self::Borrowed(b) => b.as_path(),
@@ -137,6 +140,7 @@ impl Deref for MaybePathBuf<'_> {
 }
 
 impl AsRef<Path> for MaybePathBuf<'_> {
+    #[inline]
     fn as_ref(&self) -> &Path {
         self
     }

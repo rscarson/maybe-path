@@ -6,8 +6,8 @@ It implements `Deref<Target = Path>`, so you can treat it as a drop-in replaceme
 # Performance
 `MaybePath` is a zero-runtime-cost abstraction over `Path` and `str`.  
 Benchmarks show that `MaybePath` is faster than `Cow<Path>` for most operations:  
-- Read: `512.09 ps` vs `805.55 ps`
-- Clone: `542.45 ps` vs `1.2239 ns`
+- Read: `798.20 ps` vs `1.5002 ns`
+- Clone: `811.02 ps` vs `2.3745 ns`
 
 However, it does store a `u8` to differentiate between `Path` and `str`,
 which may increase memory usage for massive amounts of `MaybePath` instances.

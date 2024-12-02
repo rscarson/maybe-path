@@ -13,6 +13,7 @@ union InnerMaybePath<'a> {
 }
 impl Copy for InnerMaybePath<'_> {}
 impl Clone for InnerMaybePath<'_> {
+    #[inline]
     fn clone(&self) -> Self {
         *self
     }
@@ -26,8 +27,8 @@ impl Clone for InnerMaybePath<'_> {
 /// # Performance
 /// `MaybePath` is a zero-runtime-cost abstraction over `Path` and `str`.  
 /// Benchmarks show that `MaybePath` is faster than `Cow<Path>` for most operations:  
-/// - Read: `512.09 ps` vs `805.55 ps`
-/// - Clone: `542.45 ps` vs `1.2239 ns`
+/// - Read: `798.20 ps` vs `1.5002 ns`
+/// - Clone: `811.02 ps` vs `2.3745 ns`
 ///
 /// However, it does store a `u8` to differentiate between `Path` and `str`,
 /// which may increase memory usage for massive amounts of `MaybePath` instances.
@@ -90,12 +91,14 @@ impl<'a> MaybePath<'a> {
 
     /// Returns true if this `MaybePath` is a `Path`.  
     /// If false, `as_path` will have additional overhead
+    #[inline]
     pub fn is_path(&self) -> bool {
         self.kind == Self::KIND_PATH
     }
 
     /// Returns a Path reference to the underlying data.
     /// If this `MaybePath` is a `str`, this will allocate a new `Path`.
+    #[inline]
     pub fn as_path(&self) -> &'a Path {
         unsafe {
             if self.kind == Self::KIND_PATH {
@@ -108,6 +111,7 @@ impl<'a> MaybePath<'a> {
 
     /// Returns a str reference to the underlying data.
     /// Could return none for a `Path` if the path is not valid utf-8.
+    #[inline]
     pub fn as_str(&self) -> Option<&'a str> {
         unsafe {
             if self.kind == Self::KIND_PATH {
@@ -125,6 +129,7 @@ impl<'a> MaybePath<'a> {
     ///
     /// While the current implementation at time of writing virtually guarantees that all `str`'s are valid paths,  
     /// this is an implementation detail, and should not be relied upon.
+    #[inline]
     pub unsafe fn as_path_unchecked(&self) -> &Path {
         self.inner.path
     }
@@ -136,6 +141,7 @@ impl<'a> MaybePath<'a> {
     ///
     /// While the current implementation at time of writing virtually guarantees that all `str`'s are valid paths,  
     /// The same cannot be said for paths being valid str's. It is possible for non-utf8 paths to exist, making this function unsafe.
+    #[inline]
     pub unsafe fn as_str_unchecked(&self) -> &str {
         self.inner.str
     }
@@ -215,6 +221,7 @@ impl Display for MaybePath<'_> {
 impl Deref for MaybePath<'_> {
     type Target = Path;
 
+    #[inline]
     fn deref(&self) -> &Self::Target {
         self.as_path()
     }
