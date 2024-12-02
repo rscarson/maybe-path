@@ -33,7 +33,7 @@
 //!
 //! Also includes `MaybePathBuf`, a drop-in replacement for `Cow<Path>` that includes a 3rd state for MaybePath's `str` variant.
 //!
-//! This type has performance matching, or beating that of `Cow<Path>`:
+//! This type has performance matching that of `Cow<Path>`: ( Produced ASM is identical )
 //! - Read: `1.5958 ns` vs `1.6596 ns`
 //! - Clone: `3.8059 ns` vs `3.2304 ns`
 //! - AsRef x1000: `2.1066 µs` vs `3.2081 µs`
