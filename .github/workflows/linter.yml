@@ -1,0 +1,30 @@
+name: Linter
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Check formatting
+    - name: Run fmt
+      run: cargo fmt --check
+    
+    # Lint all the things
+    - name: Run clippy
+      run: cargo clippy
+
+    # Test documentation generation
+    - name: Test documentation
+      run: cargo doc

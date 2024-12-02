@@ -1,9 +1,11 @@
+# MaybePath
+
 A Near-Zero-Overhead read-only `Path` wrapper that can also hold a `str`.  
 The primary usecase is static initialization of a `Path` at compile-time.
 
 It implements `Deref<Target = Path>`, so you can treat it as a drop-in replacement for `Path` in most cases.
 
-# Performance
+## Performance
 `MaybePath` is a zero-runtime-cost abstraction over `Path` and `str`.  
 Benchmarks show that `MaybePath` is faster than `Cow<Path>` for most operations:  
 - Read: `798.20 ps` vs `1.5002 ns`
@@ -12,7 +14,7 @@ Benchmarks show that `MaybePath` is faster than `Cow<Path>` for most operations:
 However, it does store a `u8` to differentiate between `Path` and `str`,
 which may increase memory usage for massive amounts of `MaybePath` instances.
 
-# Safety
+## Safety
 While it _is_ possible to access the underlying memory as-is with `as_path_unchecked` or `as_str_unchecked`,
 it is not recommended to do so unless you are absolutely sure that the `MaybePath` is a `Path` or `str`.
 
@@ -29,7 +31,12 @@ const PATH: MaybePath = MaybePath::new_str("foo/bar/baz");
 
 -----
 
-Also includes `MaybePathBuf`, a drop-in replacement for `Cow<Path>` that includes a 3rd state for MaybePath's `str` variant:
+Also includes `MaybePathBuf`, a drop-in replacement for `Cow<Path>` that includes a 3rd state for MaybePath's `str` variant.
+
+This type has performance matching, or beating that of `Cow<Path>`:
+- Read: `1.5958 ns` vs `1.6596 ns`
+- Clone: `3.8059 ns` vs `3.2304 ns`
+- AsRef x1000: `2.1066 µs` vs `3.2081 µs`
 
 ```rust
 use maybe_path::MaybePathBuf;

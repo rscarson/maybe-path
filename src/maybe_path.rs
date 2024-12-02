@@ -140,7 +140,9 @@ impl<'a> MaybePath<'a> {
     /// It is the caller's responsibility to ensure that this `MaybePath` is a `str`.
     ///
     /// While the current implementation at time of writing virtually guarantees that all `str`'s are valid paths,  
-    /// The same cannot be said for paths being valid str's. It is possible for non-utf8 paths to exist, making this function unsafe.
+    /// The same cannot be said for paths being valid str's.
+    ///
+    /// It is possible for non-utf8 paths to exist, making this function unsafe.
     #[inline]
     pub unsafe fn as_str_unchecked(&self) -> &str {
         self.inner.str
@@ -174,13 +176,7 @@ impl Debug for MaybePath<'_> {
 
 impl Ord for MaybePath<'_> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        if self.kind != other.kind {
-            self.kind.cmp(&other.kind)
-        } else if self.kind == Self::KIND_PATH {
-            self.as_path().cmp(other.as_path())
-        } else {
-            self.as_str().cmp(&other.as_str())
-        }
+        self.as_path().cmp(other.as_path())
     }
 }
 impl PartialOrd for MaybePath<'_> {
@@ -191,13 +187,7 @@ impl PartialOrd for MaybePath<'_> {
 
 impl PartialEq for MaybePath<'_> {
     fn eq(&self, other: &Self) -> bool {
-        if self.kind != other.kind {
-            false
-        } else if self.kind == Self::KIND_PATH {
-            self.as_path() == other.as_path()
-        } else {
-            self.as_str() == other.as_str()
-        }
+        self.as_path() == other.as_path()
     }
 }
 impl Eq for MaybePath<'_> {}
@@ -224,6 +214,13 @@ impl Deref for MaybePath<'_> {
     #[inline]
     fn deref(&self) -> &Self::Target {
         self.as_path()
+    }
+}
+
+impl AsRef<Path> for MaybePath<'_> {
+    #[inline]
+    fn as_ref(&self) -> &Path {
+        self
     }
 }
 

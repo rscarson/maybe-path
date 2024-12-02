@@ -1,7 +1,14 @@
 [package]
 name = "maybe_path"
+description = "Zero overhead static initializer for Path"
+license = "MIT OR Apache-2.0"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/rscarson/maybe-path"
+
+keywords = ["path", "static", "initialize", "const", "cow"]
+categories = ["rust-patterns", "filesystem", "data-structures"]
+readme = "README.md"
 
 [dependencies]
 serde = "1"
