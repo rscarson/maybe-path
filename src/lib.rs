@@ -1,7 +1,7 @@
 //! # MaybePath
 //! [![Crates.io](https://img.shields.io/crates/v/maybe-path.svg)](https://crates.io/crates/maybe-path)
 //! [![Build Status](https://github.com/rscarson/maybe-path/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/rscarson/maybe-path/actions?query=branch%3Amaster)
-//! [![docs.rs](https://img.shields.io/docsrs/maybe-path)](https://docs.rs/maybe-path/latest/maybe-path/)
+//! [![docs.rs](https://img.shields.io/docsrs/maybe-path)](https://docs.rs/maybe_path/latest/maybe_path/)
 //! [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/rscarson/maybe-path/master/LICENSE)
 //!
 //! A Near-Zero-Overhead read-only `Path` wrapper that can also hold a `str`.  

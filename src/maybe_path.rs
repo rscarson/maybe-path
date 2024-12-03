@@ -6,6 +6,14 @@ use std::{
     path::{Path, PathBuf},
 };
 
+/// Tag to differentiate between `Path` and `str`.
+#[derive(Copy, Clone, PartialEq, Eq)]
+#[repr(u8)]
+enum PathKind {
+    Path,
+    Str,
+}
+
 /// Interior storage for `MaybePath`
 union InnerMaybePath<'a> {
     path: &'a Path,
@@ -50,14 +58,11 @@ impl Clone for InnerMaybePath<'_> {
 /// ```
 #[derive(Copy, Clone)]
 pub struct MaybePath<'a> {
-    kind: u8,
+    kind: PathKind,
     inner: InnerMaybePath<'a>,
 }
 
 impl<'a> MaybePath<'a> {
-    const KIND_PATH: u8 = 0x00;
-    const KIND_STR: u8 = 0x01;
-
     /// Create a new `MaybePath` from a `str`.
     /// This can be done in const-time.
     ///
@@ -68,7 +73,7 @@ impl<'a> MaybePath<'a> {
     /// ```
     pub const fn new_str(str: &'a str) -> Self {
         Self {
-            kind: Self::KIND_STR,
+            kind: PathKind::Str,
             inner: InnerMaybePath { str },
         }
     }
@@ -84,7 +89,7 @@ impl<'a> MaybePath<'a> {
     pub fn new_path<P: AsRef<OsStr> + ?Sized>(path: &'a P) -> Self {
         let path = Path::new(path);
         Self {
-            kind: Self::KIND_PATH,
+            kind: PathKind::Path,
             inner: InnerMaybePath { path },
         }
     }
@@ -93,19 +98,17 @@ impl<'a> MaybePath<'a> {
     /// If false, `as_path` will have additional overhead
     #[inline]
     pub fn is_path(&self) -> bool {
-        self.kind == Self::KIND_PATH
+        self.kind == PathKind::Path
     }
 
     /// Returns a Path reference to the underlying data.
     /// If this `MaybePath` is a `str`, this will allocate a new `Path`.
     #[inline]
     pub fn as_path(&self) -> &'a Path {
-        unsafe {
-            if self.kind == Self::KIND_PATH {
-                self.inner.path
-            } else {
-                Path::new(self.inner.str)
-            }
+        if self.kind == PathKind::Path {
+            unsafe { self.inner.path }
+        } else {
+            Path::new(unsafe { self.inner.str })
         }
     }
 
@@ -113,12 +116,10 @@ impl<'a> MaybePath<'a> {
     /// Could return none for a `Path` if the path is not valid utf-8.
     #[inline]
     pub fn as_str(&self) -> Option<&'a str> {
-        unsafe {
-            if self.kind == Self::KIND_PATH {
-                self.inner.path.to_str()
-            } else {
-                Some(self.inner.str)
-            }
+        if self.kind == PathKind::Path {
+            unsafe { self.inner.path.to_str() }
+        } else {
+            unsafe { Some(self.inner.str) }
         }
     }
 
