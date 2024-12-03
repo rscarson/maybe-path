@@ -23,7 +23,3 @@ harness = false
 [[bench]]
 name = "vs_cow"
 harness = false
-
-[[bench]]
-name = "u_v_e"
-harness = false
