@@ -14,7 +14,7 @@ readme = "README.md"
 serde = {version = "1", features = ["derive"]}
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.6.0"
 
 [[bench]]
 name = "vs_path"
